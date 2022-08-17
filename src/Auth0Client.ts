@@ -178,6 +178,7 @@ const getCustomInitialOptions = (
     cache,
     client_id,
     domain,
+    customTokenDomain,
     issuer,
     leeway,
     max_age,
@@ -201,6 +202,7 @@ export default class Auth0Client {
   private readonly cacheManager: CacheManager;
   private readonly customOptions: BaseLoginOptions;
   private readonly domainUrl: string;
+  private readonly customDomain: string;
   private readonly tokenIssuer: string;
   private readonly defaultScope: string;
   private readonly scope: string;
@@ -280,6 +282,7 @@ export default class Auth0Client {
     );
 
     this.domainUrl = getDomain(this.options.domain);
+    this.customDomain = getDomain(this.options.customTokenDomain);
     this.tokenIssuer = getTokenIssuer(this.options.issuer, this.domainUrl);
 
     this.defaultScope = getUniqueScopes(
@@ -534,6 +537,7 @@ export default class Auth0Client {
         audience: params.audience,
         scope: params.scope,
         baseUrl: this.domainUrl,
+        customDomain: this.customDomain,
         client_id: this.options.client_id,
         code_verifier,
         code: codeResult.code,
@@ -1085,8 +1089,8 @@ export default class Auth0Client {
       nonceIn,
       code_challenge,
       options.redirect_uri ||
-        this.options.redirect_uri ||
-        window.location.origin
+      this.options.redirect_uri ||
+      window.location.origin
     );
 
     const orgIdHint = this.cookieStorage.get<string>(this.orgHintCookieName);

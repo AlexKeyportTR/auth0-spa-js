@@ -114,6 +114,12 @@ export interface Auth0ClientOptions extends BaseLoginOptions {
    * (when using [custom domains](https://auth0.com/docs/custom-domains))
    */
   domain: string;
+
+  /**
+   * Allow for a custom token url
+   */
+  customTokenDomain?: string;
+
   /**
    * The issuer to be used for validation of JWTs, optionally defaults to the domain above
    */
@@ -313,7 +319,7 @@ export interface RedirectLoginResult<TAppState = any> {
   appState?: TAppState;
 }
 
-export interface PopupLoginOptions extends BaseLoginOptions {}
+export interface PopupLoginOptions extends BaseLoginOptions { }
 
 export interface PopupConfigOptions {
   /**

@@ -6,6 +6,7 @@ import { createQueryParams } from './utils';
 export async function oauthToken(
   {
     baseUrl,
+    customDomain,
     timeout,
     audience,
     scope,
@@ -19,24 +20,49 @@ export async function oauthToken(
     ? createQueryParams(options)
     : JSON.stringify(options);
 
-  return await getJSON<TokenEndpointResponse>(
-    `${baseUrl}/oauth/token`,
-    timeout,
-    audience || 'default',
-    scope,
-    {
-      method: 'POST',
-      body,
-      headers: {
-        'Content-Type': useFormData
-          ? 'application/x-www-form-urlencoded'
-          : 'application/json',
-        'Auth0-Client': btoa(
-          JSON.stringify(auth0Client || DEFAULT_AUTH0_CLIENT)
-        )
-      }
-    },
-    worker,
-    useFormData
-  );
+  if (typeof customDomain !== 'undefined') {
+    return await getJSON<TokenEndpointResponse>(
+      `${customDomain}/token`,
+      timeout,
+      audience || 'default',
+      scope,
+      {
+        method: 'POST',
+        body,
+        headers: {
+          'Content-Type': useFormData
+            ? 'application/x-www-form-urlencoded'
+            : 'application/json',
+          'Auth0-Client': btoa(
+            JSON.stringify(auth0Client || DEFAULT_AUTH0_CLIENT)
+          )
+        }
+      },
+      worker,
+      useFormData
+    );
+  }
+  else {
+    return await getJSON<TokenEndpointResponse>(
+      `${baseUrl}/oauth/token`,
+      timeout,
+      audience || 'default',
+      scope,
+      {
+        method: 'POST',
+        body,
+        headers: {
+          'Content-Type': useFormData
+            ? 'application/x-www-form-urlencoded'
+            : 'application/json',
+          'Auth0-Client': btoa(
+            JSON.stringify(auth0Client || DEFAULT_AUTH0_CLIENT)
+          )
+        }
+      },
+      worker,
+      useFormData
+    );
+  }
+
 }
